@@ -1,4 +1,4 @@
-package com.dikka.cloud.storage.component;
+package com.dka.cloud.storage.component;
 
 import javax.swing.*;
 import java.awt.*;

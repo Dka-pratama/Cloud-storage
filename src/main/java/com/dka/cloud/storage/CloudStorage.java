@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */
 
-package com.dikka.cloud.storage;
+package com.dka.cloud.storage;
 
-import com.dikka.cloud.storage.ui.*;
+import com.dka.cloud.storage.ui.*;
 import com.formdev.flatlaf.FlatDarkLaf;
 import javax.swing.*;
 
@@ -22,7 +22,7 @@ public class CloudStorage {
         }
         
         SwingUtilities.invokeLater(() -> {
-            new DashboardForm().setVisible(true);
+            new LoginForm().setVisible(true);
         });
     }
 }
