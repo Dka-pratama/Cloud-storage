@@ -4,6 +4,8 @@
  */
 package com.dikka.cloud.storage.network;
 
+import com.dikka.cloud.storage.util.ConfigLoader;
+import com.dikka.cloud.storage.session.Session;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -14,7 +16,7 @@ import java.net.http.HttpResponse;
  * @author andik
  */
 public class ApiClient {
-    protected static final String BASE_URL = "";
+    protected static final String BASE_URL = ConfigLoader.get("api.base.url");;
     private final HttpClient client = HttpClient.newHttpClient();
     
     protected HttpRequest.Builder authorizedRequest(String endpoint){
