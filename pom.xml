@@ -9,7 +9,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>17</maven.compiler.release>
         <maven.compiler.target>17</maven.compiler.target>
-        <exec.mainClass>com.dikka.cloud.storage.CloudStorage</exec.mainClass>
+        <exec.mainClass>com.dka.cloud.storage.CloudStorage</exec.mainClass>
     </properties>
     <dependencies>
         <dependency>

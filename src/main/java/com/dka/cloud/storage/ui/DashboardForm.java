@@ -15,13 +15,27 @@ public class DashboardForm extends javax.swing.JFrame {
     /**
      * Creates new form DashboardForm
      */
+    private static DashboardForm instance;
     public DashboardForm() {
         initComponents();
-    LiquidProgressBar objectStorageBar = new LiquidProgressBar();
-objectStorageBar.setPercentage(65);
+        instance = this;
+        LiquidProgressBar objectStorageBar = new LiquidProgressBar();
+        objectStorageBar.setPercentage(65);
 
-panelStorageIndicator.setLayout(new java.awt.BorderLayout());
-panelStorageIndicator.add(objectStorageBar, java.awt.BorderLayout.CENTER);
+        panelStorageIndicator.setLayout(new java.awt.BorderLayout());
+        panelStorageIndicator.add(objectStorageBar, java.awt.BorderLayout.CENTER);
+    }
+    public static DashboardForm getInstance(){
+        return instance;
+    }
+    
+    private void setLoading(boolean isLoading){
+        if(isLoading){
+            ProgressBar.setIndeterminate(true);
+        } else {
+            ProgressBar.setIndeterminate(false);
+            ProgressBar.setValue(0);
+        }
     }
 
     /**
@@ -35,6 +49,7 @@ panelStorageIndicator.add(objectStorageBar, java.awt.BorderLayout.CENTER);
 
         asdasdasd = new javax.swing.JPanel();
         panelStorageIndicator = new javax.swing.JPanel();
+        ProgressBar = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -49,6 +64,9 @@ panelStorageIndicator.add(objectStorageBar, java.awt.BorderLayout.CENTER);
             .addGap(0, 100, Short.MAX_VALUE)
         );
 
+        ProgressBar.setMaximumSize(new java.awt.Dimension(32767, 6));
+        ProgressBar.setMinimumSize(new java.awt.Dimension(10, 6));
+
         javax.swing.GroupLayout asdasdasdLayout = new javax.swing.GroupLayout(asdasdasd);
         asdasdasd.setLayout(asdasdasdLayout);
         asdasdasdLayout.setHorizontalGroup(
@@ -57,13 +75,19 @@ panelStorageIndicator.add(objectStorageBar, java.awt.BorderLayout.CENTER);
                 .addGap(17, 17, 17)
                 .addComponent(panelStorageIndicator, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(382, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, asdasdasdLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(ProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         asdasdasdLayout.setVerticalGroup(
             asdasdasdLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(asdasdasdLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(panelStorageIndicator, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(327, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 311, Short.MAX_VALUE)
+                .addComponent(ProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -116,6 +140,7 @@ panelStorageIndicator.add(objectStorageBar, java.awt.BorderLayout.CENTER);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JProgressBar ProgressBar;
     private javax.swing.JPanel asdasdasd;
     private javax.swing.JPanel panelStorageIndicator;
     // End of variables declaration//GEN-END:variables

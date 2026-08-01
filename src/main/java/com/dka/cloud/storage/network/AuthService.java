@@ -15,6 +15,7 @@ public class AuthService extends ApiClient {
 
     public interface AuthCallback {
         void onSuccess();
+        default void onSuccess(String message) {onSuccess();}
         void onError(String message);
     }
 
@@ -39,6 +40,46 @@ public class AuthService extends ApiClient {
                 }
             } catch (Exception e) {
                 SwingUtilities.invokeLater(() -> callback.onError(e.getMessage()));
+            }
+        }).start();
+    }
+    
+    public void forgotPassword(String username, AuthCallback callback) {
+        new Thread(()->{
+            try {
+//                request ke endpoint forgot password
+                JsonObject body = new JsonObject();
+                body.addProperty("email", username);
+                
+                ApiResponse response = post("/auth/forgot-password", body.toString());
+                
+                if(response.isSuccess()) {
+                    JsonObject json = JsonParser.parseString(response.body).getAsJsonObject();
+//                    ambil pesan Json 
+                    String message = json.get("pesan").getAsString();
+//                    Kirim Ke UI
+                    SwingUtilities.invokeLater(()-> callback.onSuccess(message));
+                } else {
+                    SwingUtilities.invokeLater(()-> callback.onError("Gagal Mengirim kode :" + response.statusCode));
+                }
+            } catch (Exception e) {
+                SwingUtilities.invokeLater(()-> callback.onError(e.getMessage()));
+            }
+        }).start();
+    }
+    
+    public void resetPassword(String username, String code, String newPassword, AuthCallback callback) {
+        new Thread(()-> {
+            try{
+                JsonObject body = new JsonObject();
+                body.addProperty("email", username);
+                body.addProperty("code", code);
+                body.addProperty("newPassword", newPassword);
+                
+                ApiResponse response = post("/auth/reset-password", body.toString());
+                
+            } catch (Exception e) {
+                SwingUtilities.invokeLater(()-> callback.onError(e.getMessage()));
             }
         }).start();
     }

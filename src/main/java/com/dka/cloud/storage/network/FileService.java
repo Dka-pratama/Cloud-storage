@@ -23,7 +23,7 @@ public class FileService extends ApiClient{
     public void listFile(String folderPrefix, FileListCallback callback) {
         new Thread(()-> {
             try {
-                ApiResponse response = get("/files?prefix=" + folderPrefix);
+                ApiResponse response = get("/list?prefix=" + folderPrefix);
                 
                 if(response.isSuccess()) {
                     List<FileItem> fileList = parseFileList(response.body);
@@ -50,11 +50,12 @@ private List<FileItem> parseFileList(String jsonBody) {
 
             String name = fileJson.get("name").getAsString();
             long size = fileJson.get("size").getAsLong();
+            String timeCreated = fileJson.get("timeCreated").getAsString();
             String timeModified = fileJson.get("timeModified").getAsString();
-            StorageTier tier = StorageTier.valueOf(fileJson.get("tier").getAsString());
+            StorageTier tier = StorageTier.valueOf(fileJson.get("storageTier").getAsString());
             boolean isIdle = fileJson.get("isIdle").getAsBoolean();
 
-            fileList.add(new FileItem(name, size, timeModified, tier, isIdle));
+            fileList.add(new FileItem(name, size,timeCreated, timeModified, tier, isIdle));
         }
 
         return fileList;

@@ -11,13 +11,15 @@ package com.dka.cloud.storage.model;
 public class FileItem {
     private final String name;
     private final long size;
+    private final String timeCreated;
     private final String timeModified;
     private final StorageTier tier;
     private final boolean idle;
     
-    public FileItem(String name, long size, String timeModified, StorageTier tier, boolean idle) {
+    public FileItem(String name, long size, String timeCreated, String timeModified, StorageTier tier, boolean idle) {
         this.name = name;
         this.size = size;
+        this.timeCreated = timeCreated;
         this.timeModified = timeModified;
         this.tier = tier;
         this.idle = idle;
@@ -28,6 +30,9 @@ public class FileItem {
     }
     public long getSize(){
         return size;
+    }
+    public String getTimeCreated() {
+        return timeCreated;
     }
     public String getTimeModified(){
         return timeModified;
@@ -41,7 +46,7 @@ public class FileItem {
     
 //    Helper ukuran
     public String getFormattedSize() {
-        if (size < 1024) return size + "b";
+        if (size < 1024) return size + " B";
         if (size < 1024 * 1024) return String.format("%.f KB", size / 1024.0);
         if (size < 1024 * 1024 * 1024) return String.format("%.f MB", size / (1024.0 * 1024.0));
         return String.format("%.f GB", size / (1024.0 * 1024.0 * 1024.0));

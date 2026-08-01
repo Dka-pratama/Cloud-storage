@@ -8,6 +8,7 @@ package com.dka.cloud.storage.model;
  *
  * @author andik
  */
-public class StorageTier {
-    
+public enum StorageTier {
+    STANDARD,
+    ARCHIVE
 }
