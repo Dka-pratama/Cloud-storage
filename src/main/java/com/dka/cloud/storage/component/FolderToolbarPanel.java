@@ -1,0 +1,220 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
+ */
+package com.dka.cloud.storage.component;
+
+import javax.swing.*;
+import java.awt.*;
+import javax.swing.event.DocumentEvent;
+/**
+ *
+ * @author andik
+ */
+public class FolderToolbarPanel extends javax.swing.JPanel {
+
+    /**
+     * Creates new form FolderToolbarPanel
+     */
+    public interface BreadcrumbListener {
+        void onNavigate(String prefix); // prefix folder yang di tuju
+    }
+    
+    public interface UploadListener {
+        void onUploadِClicked();
+    }
+    
+    public interface NewFolderListener {
+        void onNewFolderClicked(String folderName);
+    }
+    
+    public interface SearchListener {
+        void onSearch(String keyword);
+    }
+    
+    
+    
+    private BreadcrumbListener breadcrumbListener;
+    private UploadListener uploadListener;
+    private String currentPath = "";
+    private NewFolderListener newFolderListener;
+    private SearchListener searchListener;
+    private javax.swing.Timer debounceTimer;
+    
+    public FolderToolbarPanel() {
+        initComponents();
+        
+        btnUpload.addActionListener(e -> {
+            if (uploadListener != null) uploadListener.onUploadِClicked();
+        });
+        btnNewFolder.addActionListener(e -> {
+            String folderName = JOptionPane.showInputDialog(this, "Nama folder:");
+            if (folderName != null && !folderName.trim().isEmpty()) {
+                if (newFolderListener != null) {
+                    newFolderListener.onNewFolderClicked(folderName.trim());
+                }
+            }
+        });
+        
+        txtSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {resetDebounce();}
+
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                resetDebounce();
+            }
+
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                resetDebounce();
+            }
+            
+        });
+    }
+    
+    private void resetDebounce(){
+        if(debounceTimer !=null && debounceTimer.isRunning()) {
+            debounceTimer.stop();
+        }
+        
+        debounceTimer = new javax.swing.Timer(2000, e -> {
+           String keyword = txtSearch.getText().trim();
+           if (searchListener != null) {
+               searchListener.onSearch(keyword);
+           }
+        });
+        debounceTimer.setRepeats(false);
+        debounceTimer.start();
+    }
+            
+    public void setBreadcrumbListener(BreadcrumbListener listener) {
+        this.breadcrumbListener = listener;
+    }
+    
+    public void setUploadListener(UploadListener listener) {
+        this.uploadListener = listener;
+    }
+    
+    public void setPath(String path) {
+        this.currentPath = path;
+        renderBreadcrumb();
+    }
+    public void setSearchListener (SearchListener listener) {
+        this.searchListener = listener;
+    }
+    private void renderBreadcrumb(){
+        breadcrumbContainer.removeAll();
+        breadcrumbContainer.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 0));
+        
+        addCrumb("Home", "");
+        
+        if(!currentPath.isEmpty()) {
+            String[] parts = currentPath.split("/");
+            StringBuilder accumulated = new StringBuilder();
+            
+            for(String part : parts) {
+                if (part.isEmpty()) continue;
+                accumulated.append(part).append("/");
+                
+                addSparator();
+                addCrumb(part, accumulated.toString());
+            }
+        }
+        
+        breadcrumbContainer.revalidate();
+        breadcrumbContainer.repaint();
+    }
+
+    private void addCrumb(String label, String tergetPrefix) {
+        JButton crumb = new JButton(label);
+        crumb.setBorderPainted(false);
+        crumb.setContentAreaFilled(false);
+        crumb.setFocusPainted(false);
+        crumb.setForeground(new Color(66, 133, 244));
+        crumb.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        crumb.addActionListener(e -> {
+            if (breadcrumbListener != null) breadcrumbListener.onNavigate(tergetPrefix);
+        });
+        
+        breadcrumbContainer.add(crumb);
+    }
+    
+    private void addSparator(){
+        JLabel sep = new JLabel("/");
+        sep.setForeground(Color.gray);
+        breadcrumbContainer.add(sep);
+    }
+    
+    public void setNewFolderListener(NewFolderListener listener) {
+        this.newFolderListener = listener;
+    }
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        breadcrumbContainer = new javax.swing.JPanel();
+        btnUpload = new javax.swing.JButton();
+        btnNewFolder = new javax.swing.JButton();
+        txtSearch = new javax.swing.JTextField();
+
+        javax.swing.GroupLayout breadcrumbContainerLayout = new javax.swing.GroupLayout(breadcrumbContainer);
+        breadcrumbContainer.setLayout(breadcrumbContainerLayout);
+        breadcrumbContainerLayout.setHorizontalGroup(
+            breadcrumbContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 156, Short.MAX_VALUE)
+        );
+        breadcrumbContainerLayout.setVerticalGroup(
+            breadcrumbContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 32, Short.MAX_VALUE)
+        );
+
+        btnUpload.setText("Upload");
+
+        btnNewFolder.setText("New Folder");
+
+        txtSearch.setText("Search");
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(breadcrumbContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 135, Short.MAX_VALUE)
+                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnNewFolder)
+                .addGap(18, 18, 18)
+                .addComponent(btnUpload)
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnUpload)
+                        .addComponent(btnNewFolder)
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(breadcrumbContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(7, 7, 7))
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel breadcrumbContainer;
+    private javax.swing.JButton btnNewFolder;
+    private javax.swing.JButton btnUpload;
+    private javax.swing.JTextField txtSearch;
+    // End of variables declaration//GEN-END:variables
+}

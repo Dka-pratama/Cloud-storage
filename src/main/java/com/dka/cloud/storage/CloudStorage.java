@@ -4,6 +4,7 @@
 
 package com.dka.cloud.storage;
 
+import com.dka.cloud.storage.session.Session;
 import com.dka.cloud.storage.ui.*;
 import com.formdev.flatlaf.FlatDarkLaf;
 import javax.swing.*;
@@ -27,12 +28,18 @@ public class CloudStorage {
         }
         try{
             UIManager.setLookAndFeel(new FlatDarkLaf());
-        } catch (Exception ex) {
+        } catch (Exception e) {
             System.err.println("gagal initialize flatlaf");
         }
         
         SwingUtilities.invokeLater(() -> {
-            new LoginForm().setVisible(true);
+            boolean hasValidToken = Session.getInstance().tryRestoreSession();
+
+            if (hasValidToken) {
+                new DashboardForm().setVisible(true);
+            } else {
+                new LoginForm().setVisible(true);
+            }
         });
     }
 }

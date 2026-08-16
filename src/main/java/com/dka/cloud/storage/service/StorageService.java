@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.dka.cloud.storage.network;
+package com.dka.cloud.storage.service;
 
+import com.dka.cloud.storage.network.ApiClient;
 import java.net.http.HttpRequest;
 /**
  *
@@ -11,7 +12,7 @@ import java.net.http.HttpRequest;
  */
 public class StorageService extends ApiClient {
     public interface StorageCallback {
-        void onSuccess(double objectPercent, double archivePercent);
+        void onSuccess(double objectPercent, double archivePercent, double objectUsage, double archiveUsage);
         void onError(String error);
     }
     
@@ -37,7 +38,7 @@ public class StorageService extends ApiClient {
                     double arcPercent = (arcUsage / arcTotal)* 100;
                     
                     javax.swing.SwingUtilities.invokeLater(()-> 
-                    callback.onSuccess(objPercent, arcPercent));
+                    callback.onSuccess(objPercent, arcPercent, objUsage, arcUsage));
                 } else {
                     javax.swing.SwingUtilities.invokeLater(()->
                     callback.onError("Gagal mengambil data : Http" + response.statusCode));

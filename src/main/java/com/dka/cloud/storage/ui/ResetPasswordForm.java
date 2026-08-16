@@ -4,7 +4,7 @@
  */
 package com.dka.cloud.storage.ui;
 
-import com.dka.cloud.storage.network.AuthService;
+import com.dka.cloud.storage.service.AuthService;
 import javax.swing.JOptionPane;
 import com.dka.cloud.storage.ui.DashboardForm;
 
@@ -14,16 +14,15 @@ import com.dka.cloud.storage.ui.DashboardForm;
  */
 public class ResetPasswordForm extends javax.swing.JFrame {
     
-    private String Username;
+    private final String username;
     /**
      * Creates new form LoginForm
      */
     public ResetPasswordForm(String username) {
+        this.username = username;
         initComponents();
-        this.Username = username;
-    }
-    public ResetPasswordForm() {
-        initComponents();
+        txtEmail.setEnabled(false);
+        txtEmail.setText(username);
     }
 
     /**
@@ -42,7 +41,7 @@ public class ResetPasswordForm extends javax.swing.JFrame {
         txtKode = new javax.swing.JTextField();
         btnReset = new javax.swing.JButton();
         txtNewPassword = new javax.swing.JPasswordField();
-        txtKode1 = new javax.swing.JTextField();
+        txtEmail = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -68,10 +67,10 @@ public class ResetPasswordForm extends javax.swing.JFrame {
 
         txtNewPassword.setFont(new java.awt.Font("Cascadia Code", 0, 14)); // NOI18N
 
-        txtKode1.setFont(new java.awt.Font("Cascadia Code", 0, 14)); // NOI18N
+        txtEmail.setFont(new java.awt.Font("Cascadia Code", 0, 14)); // NOI18N
 
         jLabel4.setFont(new java.awt.Font("Cascadia Code", 0, 14)); // NOI18N
-        jLabel4.setText("Kode :");
+        jLabel4.setText("Email :");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -93,7 +92,7 @@ public class ResetPasswordForm extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(txtKode)
                         .addComponent(txtNewPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtKode1)))
+                        .addComponent(txtEmail)))
                 .addGap(14, 14, 14))
         );
         jPanel1Layout.setVerticalGroup(
@@ -103,7 +102,7 @@ public class ResetPasswordForm extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtKode1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -140,47 +139,39 @@ public class ResetPasswordForm extends javax.swing.JFrame {
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
         // TODO add your handling code here:
-        String kode = txtKode.getText().trim();
+        
+        String code = txtKode.getText().trim();
         String newPassword = new String(txtNewPassword.getPassword());
         
+        if (code.isEmpty() || newPassword.isEmpty()){
+            JOptionPane.showMessageDialog(this, "Semua field wajib diisi");
+            return;
+        }
         
+        btnReset.setEnabled(false);
+        btnReset.setText("Memproses...");
+        
+        AuthService auth = new AuthService();
+        auth.resetPassword(username, code, newPassword, new AuthService.AuthCallback() {
+            @Override
+            public void onSuccess() {
+                JOptionPane.showMessageDialog(ResetPasswordForm.this, "Password berhasil di reset, silahkan login");
+                new LoginForm().setVisible(true);
+                dispose();
+            }
+
+            @Override
+            public void onError(String message) {
+                btnReset.setEnabled(true);
+                btnReset.setText("Reset");
+                JOptionPane.showMessageDialog(ResetPasswordForm.this, "Gagal : "+message);
+            }
+        });
     }//GEN-LAST:event_btnResetActionPerformed
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ResetPasswordForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ResetPasswordForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ResetPasswordForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ResetPasswordForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ResetPasswordForm().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnReset;
@@ -189,8 +180,8 @@ public class ResetPasswordForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtKode;
-    private javax.swing.JTextField txtKode1;
     private javax.swing.JPasswordField txtNewPassword;
     // End of variables declaration//GEN-END:variables
 }

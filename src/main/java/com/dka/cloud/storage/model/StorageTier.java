@@ -8,7 +8,13 @@ package com.dka.cloud.storage.model;
  *
  * @author andik
  */
+
 public enum StorageTier {
     STANDARD,
-    ARCHIVE
+    ARCHIVE;
+    
+    public static StorageTier fromString(String value) {
+        return valueOf(value.toUpperCase());
+    }
+    
 }

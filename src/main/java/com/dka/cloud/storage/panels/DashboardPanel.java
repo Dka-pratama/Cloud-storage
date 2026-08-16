@@ -4,6 +4,16 @@
  */
 package com.dka.cloud.storage.panels;
 
+import com.dka.cloud.storage.component.LiquidProgressBar;
+import com.dka.cloud.storage.model.FileItem;
+import com.dka.cloud.storage.service.StorageService;
+import com.dka.cloud.storage.ui.DashboardForm;
+import javax.swing.JOptionPane;
+import java.awt.BorderLayout;
+import java.util.List;
+import javax.swing.BoxLayout;
+import javax.swing.JPanel;
+import com.dka.cloud.storage.session.NotificationManager;
 /**
  *
  * @author andik
@@ -13,8 +23,73 @@ public class DashboardPanel extends javax.swing.JPanel {
     /**
      * Creates new form DashboardPanel
      */
+    private String currentPrefix = "";
+    private LiquidProgressBar objStoragebar;
+    private LiquidProgressBar arcStoragebar;
+    
     public DashboardPanel() {
         initComponents();
+        setupProgressbar();
+    }
+
+    private void setupProgressbar(){
+        objStoragebar = new LiquidProgressBar();
+        arcStoragebar = new LiquidProgressBar();
+        
+        objStorage.setLayout(new BorderLayout());
+        objStorage.add(objStoragebar, BorderLayout.CENTER);
+        arcStorage.setLayout(new BorderLayout());
+        arcStorage.add(arcStoragebar, BorderLayout.CENTER);
+    }
+    
+    public void loadStorageUsage() {
+//        Loading on
+        DashboardForm.getInstance().setLoading(true);
+        
+        StorageService storageServices = new StorageService();
+        storageServices.getStorageUsage(new StorageService.StorageCallback() {
+            @Override
+            public void onSuccess(double objectPercent, double archivePercent, double objectUsage, double archiveUsage) {
+                objStoragebar.setPercentage((int)objectPercent);
+                arcStoragebar.setPercentage((int)archivePercent);
+                
+                objUsage.setText(String.valueOf(objectUsage) + " GB");
+                arcUsage.setText(String.valueOf(archiveUsage) + " GB");
+                
+//                Loading off
+                DashboardForm.getInstance().setLoading(false);
+            }
+
+            @Override
+            public void onError(String error) {
+                String safeMessage = (error != null) ? error : "Tidak diketahui";
+                String lower = safeMessage.toLowerCase();
+                String friendly = (lower.contains("connect") || lower.contains("timeout") ||  lower.contains("unknownhost"))
+                    ? "Tidak ada koneksi internet"
+                    : "Gagal memuat data storage: " + error;
+                NotificationManager.getInstance().addNotification(friendly);
+            }
+        });
+    }
+    
+    public void renderFiles(List<FileItem> files) {
+        JPanel innerPanel = new JPanel() {
+            public boolean getScrollableTracksViewportWidth() {
+                return true; 
+            }
+        };
+        innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
+
+        for (FileItem item : files) {
+            FileRowPanel row = new FileRowPanel();
+            row.setData(item,currentPrefix);
+            
+            innerPanel.add(row);
+        }
+
+        scrollFileList.setViewportView(innerPanel);
+        scrollFileList.revalidate();
+        scrollFileList.repaint();
     }
 
     /**
@@ -26,9 +101,39 @@ public class DashboardPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        stdStorage = new javax.swing.JProgressBar();
+        panelStorageRow = new javax.swing.JPanel();
+        objStorage = new javax.swing.JProgressBar();
         arcStorage = new javax.swing.JProgressBar();
+        scrollFileList = new javax.swing.JScrollPane();
+        jLabel5 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        objUsage = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        arcUsage = new javax.swing.JLabel();
+
+        panelStorageRow.setLayout(new java.awt.GridLayout(1, 2, 5, 20));
+        panelStorageRow.add(objStorage);
+        panelStorageRow.add(arcStorage);
+
+        jLabel5.setFont(new java.awt.Font("Cascadia Code", 1, 14)); // NOI18N
+        jLabel5.setText("Recent :");
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel1.setText("Object :");
+
+        jLabel3.setText("Usage : ");
+
+        objUsage.setText("objUsage");
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel2.setText("Archive :");
+
+        jLabel4.setText("Usage :");
+
+        arcUsage.setText("arcUsage");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -36,40 +141,83 @@ public class DashboardPanel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(stdStorage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(arcStorage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(138, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(objUsage))
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(arcUsage)))
+                .addGap(26, 26, 26))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(arcStorage, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(stdStorage, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(165, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 6, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(objUsage))
+                .addGap(24, 24, 24)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(arcUsage))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(24, 24, 24)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(358, 358, 358))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(panelStorageRow, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(scrollFileList, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(26, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(24, 24, 24)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelStorageRow, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(scrollFileList, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JProgressBar arcStorage;
+    private javax.swing.JLabel arcUsage;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JProgressBar stdStorage;
+    private javax.swing.JProgressBar objStorage;
+    private javax.swing.JLabel objUsage;
+    private javax.swing.JPanel panelStorageRow;
+    private javax.swing.JScrollPane scrollFileList;
     // End of variables declaration//GEN-END:variables
 }

@@ -11,15 +11,35 @@ package com.dka.cloud.storage.session;
 public class Session {
     private static Session instance;
     private String token;
-    
-    private Session(){}
-    
-    public static Session getInstance(){
+
+    private Session() {}
+
+    public static Session getInstance() {
         if (instance == null) instance = new Session();
         return instance;
     }
-    
-    public void setToken(String token) {this.token = token;}
-    public String getToken() {return token; }
-    public void cleanSession() {this.token = null;}
+
+    public void setToken(String token) {
+        this.token = token;
+        TokenStorage.saveToken(token); // otomatis simpan ke disk juga
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void clear() {
+        this.token = null;
+        TokenStorage.clearToken();
+    }
+
+    // Dipanggil sekali pas app start — cek token tersimpan
+    public boolean tryRestoreSession() {
+        String saved = TokenStorage.getValidToken();
+        if (saved != null) {
+            this.token = saved;
+            return true;
+        }
+        return false;
+    }
 }

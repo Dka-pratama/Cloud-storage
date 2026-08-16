@@ -4,7 +4,7 @@
  */
 package com.dka.cloud.storage.ui;
 
-import com.dka.cloud.storage.network.AuthService;
+import com.dka.cloud.storage.service.AuthService;
 import javax.swing.JOptionPane;
 import com.dka.cloud.storage.ui.DashboardForm;
 import com.dka.cloud.storage.component.LoadingDialog;
@@ -182,7 +182,7 @@ public class LoginForm extends javax.swing.JFrame {
                 return;
             }
             AuthService auth = new AuthService();
-            auth.forgotPassword(username, new AuthService.AuthCallback() {
+            auth.forgotPassword(username, new AuthService.ForgotPasswordCallback() {
                 @Override
                 public void onSuccess(String message) {
                     JOptionPane.showMessageDialog(null, message, "Berhasil", JOptionPane.INFORMATION_MESSAGE);
@@ -193,12 +193,6 @@ public class LoginForm extends javax.swing.JFrame {
                 @Override
                 public void onError(String message) {
                     JOptionPane.showMessageDialog(null, message, "Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                    
-                }
-
-                @Override
-                public void onSuccess() {
-                    throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
                 }
             });
         }
