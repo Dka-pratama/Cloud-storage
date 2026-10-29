@@ -80,4 +80,4 @@ GitHub: [@Dka-pratama](https://github.com/Dka-pratama)
 
 #### 📄 Lisensi
 
-Informasi lisensi akan ditambahkan setelah lisensi proyek ditentukan.
+🔑 MIT License.
