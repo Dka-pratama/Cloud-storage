@@ -68,6 +68,9 @@ Cloud-storage/
 └── README.md
 ```
 
+### Note
+
+Untuk build API nya bisa di lihat disini [Coude-Storage-API](https://github.com/Dka-pratama/Cloude-storage-API)
 
 #### 👨‍💻 Pengembang
 
